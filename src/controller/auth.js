@@ -7,7 +7,7 @@ require('dotenv').config();
 var smtpTransport = require('nodemailer-smtp-transport');
 const generateJwtToken = (_id) => {
 	return jwt.sign({ _id}, process.env.JWT_SECRET, {
-		expiresIn: "1d",
+		expiresIn: "1h",
 	});
 };
 
