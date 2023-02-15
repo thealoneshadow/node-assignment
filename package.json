@@ -1,0 +1,33 @@
+{
+  "name": "elred",
+  "version": "1.0.0",
+  "description": "Assignment",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thealoneshadow/node-assignment.git"
+  },
+  "author": "Divyanshu Goyal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thealoneshadow/node-assignment/issues"
+  },
+  "homepage": "https://github.com/thealoneshadow/node-assignment#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-validator": "^6.14.2",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^6.9.1",
+    "nodemailer": "^6.9.1",
+    "nodemailer-smtp-transport": "^2.7.4",
+    "serverless-http": "^3.1.1",
+    "shortid": "^2.2.16"
+  }
+}
