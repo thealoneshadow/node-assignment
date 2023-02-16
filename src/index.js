@@ -20,6 +20,6 @@ app.get('/api', (req, res) => {
 });
 app.use('/api', authRoutes);
 app.use('/api', taskRoutes);
-app.listen(3000, () => {
+app.listen(3001, () => {
     console.log('Example app listening on port 3000!');
 });
