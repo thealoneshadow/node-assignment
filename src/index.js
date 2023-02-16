@@ -7,7 +7,7 @@ const cors = require('cors');
 //require('dotenv').config();
 //mongoose
 //	.connect(
-        `mongodb+srv://${process.env.MONGO_DB_USER}:${process.env.MONGO_DB_PASSWORD}@cluster0.gzjlcir.mongodb.net/test`
+//        `mongodb+srv://${process.env.MONGO_DB_USER}:${process.env.MONGO_DB_PASSWORD}@cluster0.gzjlcir.mongodb.net/test`
 //	)
 //	.then(() => {
 //        console.log('Database Connected');
