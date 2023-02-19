@@ -15,11 +15,11 @@ mongoose
 
 app.use(cors());
 app.use(express.json());
-app.get('/api', (req, res) => {
-    res.send('Hello World!');
+app.get('/chal', (req, res) => {
+    res.json({msg:"How are you mate, All Good?"})
 });
 app.use('/api', authRoutes);
 app.use('/api', taskRoutes);
-app.listen(3001, () => {
+app.listen(3000, () => {
     console.log('Example app listening on port 3000!');
 });
