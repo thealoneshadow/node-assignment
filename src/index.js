@@ -16,7 +16,7 @@ mongoose
 app.use(cors());
 app.use(express.json());
 app.get('/chal', (req, res) => {
-    res.json({msg:"How are you mate, All Good?"})
+    res.json({msg:"How are you mate, All Goooooooooooooooooooooooooooooooood?"})
 });
 app.use('/api', authRoutes);
 app.use('/api', taskRoutes);
