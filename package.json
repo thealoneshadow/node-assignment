@@ -25,12 +25,14 @@
     "express": "^4.18.2",
     "express-validator": "^6.14.2",
     "jsonwebtoken": "^9.0.0",
+    "lodash": "^4.17.21",
     "mongoose": "^6.9.1",
     "netlify-cli": "^12.12.1",
     "netlify-lambda": "^2.0.16",
     "nodemailer": "^6.9.1",
     "nodemailer-smtp-transport": "^2.7.4",
     "serverless-http": "^3.1.1",
-    "shortid": "^2.2.16"
+    "shortid": "^2.2.16",
+    "validator": "^13.9.0"
   }
 }
