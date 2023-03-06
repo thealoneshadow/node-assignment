@@ -1,3 +1,4 @@
+const { responseGenerator } = require("../Global Functions/response");
 const task = require("../models/task");
 const Task = require("../models/task");
 const validator = require("validator");
@@ -42,78 +43,37 @@ exports.getTasks = async (req, res) => {
 
 exports.sortTasks = (req, res) => {
   try {
-    console.log(req.user._id);
-     // Validating the request for empty body
-  if (Object.keys(req.body).length === 0) {
-    return res.status(400).json({
-      success: false,
-      message: "Request Body is Empty",
-    });
-  }
-
-  // Validating the request for missing fields
-  if (
-    req.body._id == undefined ||
-    req.body.position == undefined ||
-    req.body.currentPosition == undefined 
-  ) {
-    return res.status(400).json({
-      success: false,
-      message: "Fields Missing Expected:{_id,position,currentPosition}",
-    });
-  }
-    Task.findOne({ userId: req.user._id, position: req.body.position }).exec(
+ 
+    Task.find({ userId: req.user._id}).exec(
       (err, task) => {
-        if (err) {
-          return res.status(400).json({
-            success: false,
-            message: err.msg,
-          });
-        }
-
+        if (err) return responseGenerator(res, 400, false, err.message, []);
+        console.log(task);
         if (task) {
-          Task.updateMany(
-            { _id: req.body._id },
-            {req: req.body},
-            {
-              $set: {
-                position: req.body.position,
-              },
-            }
-          ).exec((err, tasks) => {
-            if (err) {
-              return res.status(400).json({
-                success: false,
-                message: err.message,
-              });
-            }
-            if (tasks) {
-              Task.updateMany(
-                { _id: task._id },
-                {req: req.body},
-                {
-                  $set: {
-                    position: req.body.currentPosition,
-                  },
-                }
-              ).exec((err, tasksUpdated) => {
-                if (err) {
-                  return res.status(400).json({
-                    success: false,
-                    message: err.message,
-                  });
-                }
-                if (tasksUpdated) {
-                  res.status(200).json({success:true, message: "Successfully sorted" });
-                }
-              });
-            }
-          });
+          for(let i=0 ; i<req.body.length ; i++){
+            let key = req.body[i];
+            console.log(key);
+          const result = task.find((elem) => key._id == elem._id);
+          console.log(result);
+          if(!result){
+            return responseGenerator(res, 400, false, "Wrong Task Id Provided to sort", []);
+          } else{
+            // sstart
+
+            Task.updateOne({ _id: key._id },{$set: {position: key.position}}).exec((err, tasks) => {
+              if (err) return responseGenerator(res, 400, false, err.message, []);
+              if (tasks) {
+                Task.updateOne({ _id: tasks.id },{ $set: { position: key.currentPosition }}).exec((err, tasksUpdated) => {
+                  if (err) return responseGenerator(res, 400, false, err.message, []);
+                  if (tasksUpdated) return responseGenerator(res, 200, true, "Tasks Sorted Successfully", []);
+                });
+              }
+            });
+
+            //end
+          }
+        }
         } else {
-          return res.status(400).json({
-            success: false,
-            message: "No Task Available to sort",
-          });
+          return responseGenerator(res, 400, false, "No Tasks Found For Sorting", []);
         }
       }
     );

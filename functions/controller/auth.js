@@ -6,6 +6,7 @@ const nodemailer = require("nodemailer");
 const OTP = require("../models/otp");
 require("dotenv").config();
 var smtpTransport = require("nodemailer-smtp-transport");
+const { parseInt } = require("lodash");
 const generateJwtToken = (_id) => {
   return jwt.sign({ _id }, process.env.JWT_SECRET, {
     expiresIn: "1h",
@@ -125,6 +126,7 @@ exports.signout = (req, res) => {
 exports.verification = (req, res) => {
   try {
     let id = req.body.id;
+    req.body.otp = parseInt(req.body.otp);
     OTP.find({ userId: req.body.id }).exec((err, users) => {
       if (err) {
         return res.status(400).json({
@@ -134,7 +136,6 @@ exports.verification = (req, res) => {
         });
       }
 
-      if (req.body.opt) {
         if (users[0].otp != req.body.otp) {
           return res.status(400).json({
             success: false,
@@ -142,7 +143,6 @@ exports.verification = (req, res) => {
             status: 400,
           });
         }
-      }
 
       if (users[0]) {
         OTP.updateOne(
