@@ -7,6 +7,9 @@ const OTP = require("../models/otp");
 require("dotenv").config();
 var smtpTransport = require("nodemailer-smtp-transport");
 const { parseInt } = require("lodash");
+const { validation } = require("../globalFunctions/Validation");
+const { responseGenerator } = require("../globalFunctions/response");
+
 const generateJwtToken = (_id) => {
   return jwt.sign({ _id }, process.env.JWT_SECRET, {
     expiresIn: "1h",
@@ -31,6 +34,11 @@ const transporter = nodemailer.createTransport(
 );
 
 exports.signup = (req, res) => {
+
+  const validate = validation(["firstName","lastName","email","password"],["string","string","email","password"],req.body,res);
+    if(!validate.success){
+      return responseGenerator(res, 400, false, validate.message, []);
+    }
   User.findOne({ email: req.body.email }).exec(async (err, user) => {
     if (user) {
       return res.status(400).json({
@@ -70,6 +78,10 @@ exports.signup = (req, res) => {
 };
 
 exports.signin = (req, res) => {
+  const validate = validation(["email","password"],["email","password"],req.body,res);
+  if(!validate.success){
+    return responseGenerator(res, 400, false, validate.message, []);
+  }
   User.findOne({ email: req.body.email, req: req.body }).exec(
     async (err, user) => {
       if (err)
@@ -124,6 +136,10 @@ exports.signout = (req, res) => {
 };
 
 exports.verification = (req, res) => {
+  const validate = validation(["id","otp"],["id","otp"],req.body,res);
+  if(!validate.success){
+    return responseGenerator(res, 400, false, validate.message, []);
+  }
   try {
     let id = req.body.id;
     req.body.otp = parseInt(req.body.otp);

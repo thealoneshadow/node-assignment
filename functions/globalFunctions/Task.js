@@ -160,7 +160,7 @@ exports.ValidateDeleteTask = async (req, res, next) => {
   if (
     typeof req.body._id !== "string" ||
     validator.isEmpty(req.body._id) ||
-    validator.isWhitelisted(req.body._id, " ") ||
+    validator.isWhitelisted(req.body._id, "  ") ||
     !validator.isMongoId(req.body._id)
   ) {
     return responseGenerator(res,400,false,"Valid Task id is required and must not be Empty",[]);
@@ -171,12 +171,10 @@ exports.ValidateDeleteTask = async (req, res, next) => {
 
 
 exports.ValidateSortTask = async (req, res, next) => {
-    console.log(req.body);
     
     // Validating the request for Empty Body
     for(let i=0 ; i<req.body.length ; i++){
         let key = req.body[i];
-        console.log(key)
         // Validating the request for Empty Body
         if (Object.keys(key).length === 0) {
             return  responseGenerator(res,400,false,"Request Body is Empty",[]);
@@ -188,11 +186,11 @@ exports.ValidateSortTask = async (req, res, next) => {
             key.position == undefined ||
             key.currentPosition == undefined
           ) {
-            return  responseGenerator(res,400,false,"Fields Missing Expected:{_id,position,currentPosition}",[]);
+            return  responseGenerator(res,400,false,"Fields Missing Expected:{_id,position}",[]);
           }
 
         // Validating the request for allowed fields
-        const allowedFields = ["_id","position","currentPosition"];
+        const allowedFields = ["_id","position"];
         const extraFields = Object.keys(key).filter((field) => !allowedFields.includes(field));
   
         if (extraFields.length > 0) {
@@ -217,13 +215,6 @@ exports.ValidateSortTask = async (req, res, next) => {
             return responseGenerator(res,400,false,"Valid Position is required and must not be Empty",[]);
         }
 
-        // Validating the request for position
-        if (
-            typeof key.currentPosition !== "number" ||
-            key.currentPosition == null || key.currentPosition < 0
-        ) {
-            return responseGenerator(res,400,false,"Valid Current Position is required and must not be Empty",[]);
-        }
 
     }
 

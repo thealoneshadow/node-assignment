@@ -31,6 +31,8 @@ const taskSchema = new mongoose.Schema(
 );
 
 
+
+
 //save hook
 // taskSchema.pre("save", function (next, req) {
 //   const date = this.date;
@@ -143,3 +145,15 @@ taskSchema.virtual("slug").get(function () {
 });
 
 module.exports = mongoose.model("Task", taskSchema);
+
+// var task = new Task({ title: 'Test', date: '2016-05-21', status:"Complete" });
+
+// task.findSimilarType(function(err, tasks) {
+
+//   if(err) return err;
+
+//   task.array.forEach(element => {
+    
+//   });
+
+// })

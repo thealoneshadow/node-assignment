@@ -1,13 +1,16 @@
-const { responseGenerator } = require("../Global Functions/response");
-const task = require("../models/task");
+const { validation } = require("../globalFunctions/Validation");
+const { checkDuplicateSort } = require("../globalFunctions/duplicate");
+const { responseGenerator } = require("../globalFunctions/response");
 const Task = require("../models/task");
-const validator = require("validator");
 
 exports.createTask = async (req, res,next) => {
   try {
     // Destructuring the request body
     const { title, date, status } = req.body;
-
+    const validate =await validation(["title","date","status"],["string","date","status"],req.body,res);
+    if(!validate.success){
+      return responseGenerator(res, 400, false, validate.message, []);
+    }
 
     // Finding based on the user id and then sorting the tasks based on the position
     Task.find({ userId: req.user._id }).exec(async (err, tasks) => {
@@ -36,56 +39,112 @@ exports.createTask = async (req, res,next) => {
 };
 
 exports.getTasks = async (req, res) => {
-  console.log(req.user);
   const result = await Task.find({userId:req.user._id}).lean(false).exec();
   return res.status(200).json({success:true, result:[result] });
 };
 
-exports.sortTasks = (req, res) => {
-  try {
- 
-    Task.find({ userId: req.user._id}).exec(
-      (err, task) => {
-        if (err) return responseGenerator(res, 400, false, err.message, []);
-        console.log(task);
-        if (task) {
-          for(let i=0 ; i<req.body.length ; i++){
-            let key = req.body[i];
-            console.log(key);
-          const result = task.find((elem) => key._id == elem._id);
-          console.log(result);
-          if(!result){
-            return responseGenerator(res, 400, false, "Wrong Task Id Provided to sort", []);
-          } else{
-            // sstart
+// exports.sortTasks =async (req, res) => {
+//   try {
+    
+//     // Checking if the request body has duplicate fields
+//     const check = await checkDuplicateSort(req.body);
+//     if(check){
+//       return responseGenerator(res, 400, false, "Duplicate Fields Found", []);
+//     }
+//     for(let i=0 ; i<req.body.length ; i++){
+//     let key = req.body[i];
+//     Task.find({ userId: req.user._id}).exec( async (err, task) => {
+//         if (err) return responseGenerator(res, 400, false, err.message, []);
+//         console.log("i am task" +task);
+//         if (task) {
+//           const result = task.find((elem) => key._id == elem._id);
+//           console.log("i am result" +result);
+//           if(!result){
+//             return responseGenerator(res, 400, false, "Wrong Task Id Provided to sort", []);
+//           } else{
+//             // sstart
+//             const response =  await Task.findOne({userId: req.user._id,position: key.position}).exec();
+//             const update   =await Task.updateOne({ _id: key._id },{$set: {position: key.position}}).exec(async(err, tasks) => {
+//               if (err) return responseGenerator(res, 400, false, err.message, []);
+//               console.log(tasks);
+//               if (tasks) {
+//                 Task.updateOne({ _id: response._id },{ $set: { position: result.position }}).exec(async (err, tasksUpdated) => {
+//                   if (err) return responseGenerator(res, 400, false, err.message, []);
+//                   if (tasksUpdated) {
+//                     return true;
+//                   }
+//                 });
+//               }
+//             });
 
-            Task.updateOne({ _id: key._id },{$set: {position: key.position}}).exec((err, tasks) => {
-              if (err) return responseGenerator(res, 400, false, err.message, []);
-              if (tasks) {
-                Task.updateOne({ _id: tasks.id },{ $set: { position: key.currentPosition }}).exec((err, tasksUpdated) => {
-                  if (err) return responseGenerator(res, 400, false, err.message, []);
-                  if (tasksUpdated) return responseGenerator(res, 200, true, "Tasks Sorted Successfully", []);
-                });
-              }
-            });
 
-            //end
-          }
-        }
-        } else {
-          return responseGenerator(res, 400, false, "No Tasks Found For Sorting", []);
-        }
+
+//             //end
+//           }
+//         } else {
+//           return responseGenerator(res, 400, false, "No Tasks Found For Sorting", []);
+//         }
+//       } 
+//     );
+//     } 
+//     return responseGenerator(res, 200, true, "Tasks Sorted Successfully", []);
+//   } catch (err) {
+//     console.log(err);
+//   }
+// };
+
+
+exports.sortTasks =async (req, res) => {
+    
+    // Checking if the request body has duplicate fields
+    let data = req.body.tasks;
+
+    for(let i=0 ; i<data.length ; i++){
+      const validate =await validation(["taskId","position"],["id","number"],data[i],res);
+      if(!validate.success){
+        return responseGenerator(res, 400, false, validate.message, []);
       }
-    );
-  } catch (err) {
-    console.log(err);
-  }
+    }
+    const check = await checkDuplicateSort(data);
+    if(check){
+      return responseGenerator(res, 400, false, "Duplicate Fields Found", []);
+    }
+    for(let i=0 ; i<data.length ; i++){
+    let key = data[i];
+
+    const task = await Task.findOne({ userId: req.user._id, _id: key.taskId }).exec();
+
+    if (!task) {
+      return responseGenerator(res, 400, false, "Wrong Task Id Provided to sort", []);
+    }
+
+    const response = await Task.findOne({ userId: req.user._id, position: key.position }).exec();
+
+    const tasksUpdated = await Task.updateOne({ _id: key.taskId }, { $set: { position: key.position } }).exec();
+
+    if (tasksUpdated.nModified === 0) {
+      return responseGenerator(res, 400, false, "Task position not updated", []);
+    }
+
+    if (response) {
+      const updateResponse = await Task.updateOne({ _id: response._id }, { $set: { position: task.position } }).exec();
+
+      if (updateResponse.nModified === 0) {
+        return responseGenerator(res, 400, false, "Task position not updated", []);
+      }
+    }
+    } 
+    return responseGenerator(res, 200, true, "Tasks Sorted Successfully", []);
 };
 
 exports.patchTask = (req, res,next) => {
   try {
+    const validate = validation(["taskId","title","date","status"],["id","string","date","status"],req.body,res);
+    if(!validate.success){
+      return responseGenerator(res, 400, false, validate.message, []);
+    }
     Task.updateOne(
-      { _id: req.body._id },
+      { _id: req.body.taskId },
       {req: req.body},
       {
         $set: {
@@ -111,8 +170,12 @@ exports.patchTask = (req, res,next) => {
 };
 
 exports.deleteTask = (req, res) => {
+  const validate = validation(["taskId"],["id"],req.body,res);
+    if(!validate.success){
+      return responseGenerator(res, 400, false, validate.message, []);
+    }
   try {
-    Task.deleteOne({ _id: req.body._id }).exec((err, task) => {
+    Task.deleteOne({ _id: req.body.taskId }).exec((err, task) => {
       if (err) {
         return res.status(400).json({
           success: false,

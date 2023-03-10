@@ -4,6 +4,7 @@ const serverless = require("serverless-http");
 const mongoose = require('mongoose');
 const authRoutes = require('./routes/auth');
 const taskRoutes = require('./routes/task');
+const categoryRoutes = require('./routes/category');
 const router = express.Router();
 const cors = require('cors');
 require('dotenv').config();
@@ -22,6 +23,7 @@ router.get('/', (req, res) => {
 });
 router.use('/api', authRoutes);
 router.use('/api', taskRoutes);
+router.use('/api', categoryRoutes);
 app.use("/.netlify/functions/index", router);
 module.exports.handler = serverless(app);
 
@@ -31,6 +33,7 @@ module.exports.handler = serverless(app);
 // const mongoose = require('mongoose');
 // const authRoutes = require('./routes/auth');
 // const taskRoutes = require('./routes/task');
+// const categoryRoutes = require('./routes/category');
 // const cors = require('cors');
 // require('dotenv').config();
 // mongoose
@@ -48,6 +51,7 @@ module.exports.handler = serverless(app);
 // });
 // app.use('/api', authRoutes);
 // app.use('/api', taskRoutes);
+// app.use('/api', categoryRoutes);
 // app.listen(3000, () => {
 //     console.log('Example app listening on port 3000!');
 // });

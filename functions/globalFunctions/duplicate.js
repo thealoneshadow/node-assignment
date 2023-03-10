@@ -19,3 +19,15 @@ exports.hasDuplicateFields = (req) => {
     return false;
   }
   };
+
+  exports.checkDuplicateSort = (objectsArray) => {
+
+    for (let i = 0; i < objectsArray.length; i++) {
+      for (let j = i + 1; j < objectsArray.length; j++) {
+        if (objectsArray[i]._id === objectsArray[j]._id && objectsArray[i].position === objectsArray[j].position && objectsArray[i].currentPosition === objectsArray[j].currentPosition) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }

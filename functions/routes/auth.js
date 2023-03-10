@@ -5,12 +5,12 @@ const {
 	  validateSignUp,
 	  validateOTP,
 	  validateSignIn,
-} = require("../Global Functions/Auth");
+} = require("../globalFunctions/Auth");
 const router = express.Router();
 
-router.post("/signup",validateSignUp, signup);
-router.post("/signin",validateSignIn, signin);
-router.post("/otpvalidation",validateOTP, verification);
+router.post("/signup", signup);
+router.post("/signin", signin);
+router.post("/otpvalidation",verification);
 router.post("/signout", signout)
 
 module.exports = router;
