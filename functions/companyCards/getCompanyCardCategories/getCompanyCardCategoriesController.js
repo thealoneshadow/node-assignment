@@ -1,4 +1,4 @@
-const { newResponseGenerator } = require("../../globalFunctions/response");
+const { newResponseGenerator } = require("../../utility/response");
 const companyCardCategoryList = require("../../models/companyCardCategoryList");
 
 exports.getCompanyCardCategory = async (req, res) => {

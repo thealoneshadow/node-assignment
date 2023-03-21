@@ -5,7 +5,7 @@ const {
 	  validateSignUp,
 	  validateOTP,
 	  validateSignIn,
-} = require("../globalFunctions/Auth");
+} = require("../utility/Auth");
 const router = express.Router();
 
 router.post("/signup", signup);

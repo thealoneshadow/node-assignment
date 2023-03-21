@@ -94,8 +94,15 @@ exports.validation = (format,types,body,res,next) => {
           ) {
             return {success:false,message:"Valid OTP is required in String format and must not be Empty. Check Your Email for a 4 Digit OTP valid for 5 minutes"}
           }
-        } 
-        else {
+        } else if(types[i] == "colorCode"){
+          if (
+              typeof bodyResponse[i] !== "string" ||
+              bodyResponse[i].includes("#") ||
+              bodyResponse[i].length != 6 || !validator.isValidColorCode(bodyResponse[i])
+            ) {
+              return {success:false,message:"Valid Color code is required and must not be Empty. Color code must be 6 characters long and must be in Hexadecimal format"};
+            }
+      } else {
             return {success:false,message:`Invalid type:${types[i]}`};
         }
     }

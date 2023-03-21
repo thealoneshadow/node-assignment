@@ -25,3 +25,9 @@ exports.checkAlphanumeric = (str) => {
     return alphanumericRegex.test(str);
 
 }
+
+exports.isValidColorCode = (colorCode) => {
+    const regex = /^[a-fA-F0-9]{6}$/;
+    return regex.test(colorCode);
+  }
+  

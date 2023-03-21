@@ -1,5 +1,5 @@
-const { validation } = require("../../globalFunctions/Validation");
-const { newResponseGenerator } = require("../../globalFunctions/response");
+const { validation } = require("../../utility/Validation");
+const { newResponseGenerator } = require("../../utility/response");
 const companyCardCategoryImageList = require("../../models/companyCardCategoryImageList");
 const companyCardCategoryList = require("../../models/companyCardCategoryList");
 const { getSingleCompanyCardCategoryImageData } = require("./postCardCategoryDataChecker");

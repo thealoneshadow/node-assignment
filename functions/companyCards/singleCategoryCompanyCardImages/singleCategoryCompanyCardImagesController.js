@@ -1,7 +1,7 @@
-const { validation } = require("../../globalFunctions/Validation");
+const { validation } = require("../../utility/Validation");
 const {
   newResponseGenerator,
-} = require("../../globalFunctions/response");
+} = require("../../utility/response");
 const companyCardCategoryImageList = require("../../models/companyCardCategoryImageList");
 const companyCardCategoryList = require("../../models/companyCardCategoryList");
 exports.getSingleCompanyCardCategoryImage = async (req, res) => {

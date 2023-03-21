@@ -1,6 +1,6 @@
-const { validation } = require("../globalFunctions/Validation");
-const { checkDuplicateSort } = require("../globalFunctions/duplicate");
-const { responseGenerator } = require("../globalFunctions/response");
+const { validation } = require("../utility/Validation");
+const { checkDuplicateSort } = require("../utility/duplicate");
+const { responseGenerator } = require("../utility/response");
 const Task = require("../models/task");
 
 exports.createTask = async (req, res,next) => {

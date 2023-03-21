@@ -1,4 +1,4 @@
-const { validation } = require("../../globalFunctions/Validation");
+const { validation } = require("../../utility/Validation");
 
 exports.validatePostArray = (body) => {
   if (Object.keys(body).length === 0)

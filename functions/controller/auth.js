@@ -7,12 +7,12 @@ const OTP = require("../models/otp");
 require("dotenv").config();
 var smtpTransport = require("nodemailer-smtp-transport");
 const { parseInt } = require("lodash");
-const { validation } = require("../globalFunctions/Validation");
-const { responseGenerator } = require("../globalFunctions/response");
+const { validation } = require("../utility/Validation");
+const { responseGenerator } = require("../utility/response");
 
 const generateJwtToken = (_id) => {
   return jwt.sign({ _id }, process.env.JWT_SECRET, {
-    expiresIn: "1h",
+    expiresIn: "12h",
   });
 };
 
