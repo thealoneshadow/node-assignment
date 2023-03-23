@@ -1,30 +1,36 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
-name: Node.js CI
+ name: Get PR comments
+  if: > 
+    github.event_name == 'pull_request' &&
+    github.event.action == 'closed' &&
+    github.event.pull_request.merged == true
+  id: get_comments
+  uses: actions/github-script@v4
+  with:
+    github-token: ${{ secrets.GITHUB_TOKEN }}
+    script: |
+      const response = await github.pulls.listReviewComments({
+        owner: context.repo.owner,
+        repo: context.repo.repo,
+        pull_number: context.payload.pull_request.number,
+      });
+      return JSON.stringify(response.data.map(comment => comment.body));
 
-on:
-  push:
-    branches: [ "main" ]
+- name: Teams Notification
+  if: always()
+  uses: adrianco-twilio/teams-action@v1.1.1
+  with:
+    status: ${{ job.status }}
+    url: ${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}
+    text: 'Build for commit ${{ github.sha }} completed.'
+    title: 'Build notification'
+    summary: 'Build details'
+    theme-color: '#000000'
+    facts: |
+      Commit message: ${{ github.event.head_commit.message }}
+      Author: ${{ github.event.head_commit.author.name }}
+      Pull request: ${{ github.event.pull_request.html_url }}
+      Release notes: ${{ steps.get_comments.outputs.result }}
 
-
-jobs:
-  build:
-
-    runs-on: self-hosted
-
-    strategy:
-      matrix:
-        node-version: [ 16.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
-    steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm' 
-        
-    - run: npm run build --if-present
-    - run: sudo pm2 restart default
